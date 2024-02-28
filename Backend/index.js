@@ -4,6 +4,7 @@ require('dotenv').config();
 const cors = require('cors');
 const app = express();
 app.use(cors()); // Note: Use cors() instead of cors
+app.use(express.json())
 const PORT = process.env.PORT || 3000;
 
 const connectionString = 'postgresql://aymansuhail:eoCV1yXptus0@ep-sparkling-limit-a57mzl0i.us-east-2.aws.neon.tech/Dummydata?sslmode=require';
