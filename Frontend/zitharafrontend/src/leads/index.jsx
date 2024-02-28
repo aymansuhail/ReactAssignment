@@ -13,6 +13,13 @@ const Leads = () => {
     const [sortDirection, setSortDirection] = useState('asc'); // Default sorting direction ascending
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(20);
+    const [showForm, setShowForm] = useState(false);
+    const [formData, setFormData] = useState({
+        customer_name: '',
+        age: '',
+        location: '',
+        phone: ''
+    });
 
     useEffect(() => {
         console.log('Fetching customers...');
@@ -93,7 +100,36 @@ const Leads = () => {
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
     const currentRecords = filteredCustomers.slice(indexOfFirstRecord, indexOfLastRecord);
 
+    // Calculate the starting serial number for the current page
+    const startingSerialNumber = (currentPage - 1) * recordsPerPage;
+
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const addCustomer = async () => {
+        // Implement your logic to send the form data to the backend for creating a new customer
+        try {
+            const response = await axios.post('http://localhost:3000/customers', formData);
+            console.log('New customer added:', response.data);
+            fetchCustomers(); // Fetch updated customer list after adding a new customer
+            setShowForm(false); // Close the form after successful submission
+            setFormData({ // Clear the form data
+                customer_name: '',
+                age: '',
+                location: '',
+                phone: ''
+            });
+        } catch (error) {
+            console.error('Error adding customer:', error);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
 
     return (
         <TitleCard title="Customers" topMargin="mt-2" >
@@ -104,9 +140,33 @@ const Leads = () => {
                         placeholder="Search by name or location"
                         value={searchQuery}
                         onChange={handleSearch}
-                        className="px-2 py-1 border rounded"
+                        className="px-2 py-1 border rounded  w-80"
                     />
                 </div>
+                <button className="btn btn-primary mb-4" onClick={() => setShowForm(true)}>Add Customer</button>
+                {showForm && (
+                    <dialog id="my_modal_1" className="modal" open>
+                        <div className="modal-box p-8">
+                            <h3 className="font-bold text-lg mb-4">Add New Customer</h3>
+                            <div className="mb-4">
+                                <input type="text" name="customer_name" value={formData.customer_name} onChange={handleInputChange} placeholder="Customer Name" className="form-control" />
+                            </div>
+                            <div className="mb-4">
+                                <input type="number" name="age" value={formData.age} onChange={handleInputChange} placeholder="Age" className="form-control" />
+                            </div>
+                            <div className="mb-4">
+                                <input type="text" name="location" value={formData.location} onChange={handleInputChange} placeholder="Location" className="form-control" />
+                            </div>
+                            <div className="mb-4">
+                                <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="Phone" className="form-control" />
+                            </div>
+                            <div className="flex justify-end">
+                                <button onClick={addCustomer} className="btn btn-primary mr-2">Confirm</button>
+                                <button onClick={() => setShowForm(false)} className="btn btn-secondary">Close</button>
+                            </div>
+                        </div>
+                    </dialog>
+                )}
                 {isLoading ? (
                     <p>Loading...</p>
                 ) : (
@@ -114,6 +174,7 @@ const Leads = () => {
                         <table className="table w-full">
                             <thead>
                                 <tr>
+                                    <th>Number</th>
                                     <th>Name</th>
                                     <th>Age</th>
                                     <th>Phone</th>
@@ -130,8 +191,9 @@ const Leads = () => {
                             <tbody>
                                 {currentRecords
                                     .sort((a, b) => sortBy === 'date' ? compareDates(a, b) : compareTimes(a, b))
-                                    .map(customer => (
+                                    .map((customer, index) => (
                                         <tr key={customer.sno}>
+                                            <td>{startingSerialNumber + index + 1}</td>
                                             <td>{customer.customer_name}</td>
                                             <td>{customer.age}</td>
                                             <td>{customer.phone}</td>
@@ -161,5 +223,8 @@ const Leads = () => {
         </TitleCard>
     );
 };
+
+
+
 
 export default Leads;

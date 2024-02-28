@@ -59,15 +59,16 @@ app.delete('/customers/:sno', async (req, res) => {
 });
 
 
-// Handling unhandled routes
-app.use((req, res) => {
-  res.status(404).send('Route not found');
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Internal server error:', err);
-  res.status(500).send('Internal server error');
+app.post('/customers', async (req, res) => {
+  const { customer_name, age, location, phone } = req.body;
+  const created_at = new Date();
+  try {
+    const result = await client.query('INSERT INTO customer_info (customer_name, age, created_at, location, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *', [customer_name, age, created_at, location, phone]);
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error creating customer:', err);
+    res.status(500).send('Error creating customer');
+  }
 });
 
 app.listen(PORT, () => {
