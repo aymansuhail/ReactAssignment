@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import TitleCard from '../Cards/TitleCard';
 import axios from 'axios';
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+
 const Leads = () => {
     const [currentRecords, setCurrentRecords] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -170,11 +172,16 @@ const Leads = () => {
                                     <th>Phone</th>
                                     <th>Location</th>
                                     <th>
-                                        <button onClick={() => handleSort('date')} className="btn btn-link">Date</button>
-                                    </th>
-                                    <th>
-                                        <button onClick={() => handleSort('time')} className="btn btn-link">Time</button>
-                                    </th>
+    <button onClick={() => handleSort('date')} className="btn btn-link">
+        Date {sortBy === 'date' && sortDirection === 'asc' ? <FaArrowUp /> : <FaArrowDown />}
+    </button>
+</th>
+<th>
+    <button onClick={() => handleSort('time')} className="btn btn-link">
+        Time {sortBy === 'time' && sortDirection === 'asc' ? <FaArrowUp /> : <FaArrowDown />}
+    </button>
+</th>
+
                                     <th>Action</th>
                                 </tr>
                             </thead>
