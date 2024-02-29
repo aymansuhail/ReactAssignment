@@ -20,7 +20,7 @@ client.connect()
   .catch(err => console.error('Error connecting to PostgreSQL database:', err));
 
 // Endpoint to fetch all data
-app.get('/customers', async (req, res) => {
+app.get('https://reactassignment-wfxm.onrender.com/customers', async (req, res) => {
   try {
     const result = await client.query('SELECT * FROM customer_info');
     res.json(result.rows);
@@ -31,7 +31,7 @@ app.get('/customers', async (req, res) => {
 });
 
 // Endpoint to fetch data by ID
-app.get('/customers/:sno', async (req, res) => {
+app.get('https://reactassignment-wfxm.onrender.com/customers/:sno', async (req, res) => {
   const sno = req.params.sno;
   try {
     const result = await client.query('SELECT * FROM customer_info WHERE sno = $1', [sno]);
@@ -46,7 +46,7 @@ app.get('/customers/:sno', async (req, res) => {
   }
 });
 // Endpoint to delete a user by sno
-app.delete('/customers/:sno', async (req, res) => {
+app.delete('https://reactassignment-wfxm.onrender.com/customers/:sno', async (req, res) => {
   const sno = req.params.sno;
   try {
     const result = await client.query('DELETE FROM customer_info WHERE sno = $1 RETURNING *', [sno]);
@@ -62,7 +62,7 @@ app.delete('/customers/:sno', async (req, res) => {
 });
 
 
-app.post('/customers', async (req, res) => {
+app.post('https://reactassignment-wfxm.onrender.com/customers', async (req, res) => {
   const { customer_name, age, location, phone } = req.body;
   const created_at = new Date();
   try {

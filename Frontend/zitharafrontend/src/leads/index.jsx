@@ -39,7 +39,7 @@ const Leads = () => {
 
     const fetchCustomers = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/customers');
+            const response = await axios.get('https://reactassignment-wfxm.onrender.com/customers');
             setCustomers(response.data);
             setFilteredCustomers(response.data); // Initialize filteredCustomers with all customers
             setIsLoading(false);
@@ -52,7 +52,7 @@ const Leads = () => {
 
     const deleteCustomer = async (customerId) => {
         try {
-            const response = await axios.delete(`http://localhost:3000/customers/${customerId}`);
+            const response = await axios.delete(`https://reactassignment-wfxm.onrender.com/customers/${customerId}`);
             console.log(response.data.message); // Log success message
             fetchCustomers(); // Fetch updated customer list after deletion
         } catch (error) {
@@ -98,7 +98,7 @@ const Leads = () => {
     const addCustomer = async () => {
         // Implement your logic to send the form data to the backend for creating a new customer
         try {
-            const response = await axios.post('http://localhost:3000/customers', formData);
+            const response = await axios.post('https://reactassignment-wfxm.onrender.com/customers', formData);
             console.log('New customer added:', response.data);
             fetchCustomers(); // Fetch updated customer list after adding a new customer
             setShowForm(false); // Close the form after successful submission
