@@ -35,3 +35,14 @@ with a query to create a new customer
     const result = await client.query('INSERT INTO customer_info (customer_name, age, created_at, location, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *', [customer_name, age, created_at, location, phone]);
 also ensures SQL query injection safety 
 }
+# FRONT END(React.js)
+#### Used useState hook for state managment and useEffect hook in the component 
+used axios library to fetch the data from the apis 
+created components for card typography and used tailwindcss for styling 
+
+
+### Other ways to use postgres 
+#### Could use Prisma 
+It provides ORM so that there is no need to worry about the SQL syntax, auto-completion 
+
+## DEPLOYED BACKEND ON RENDER AND USED THE DEPLOYED LINKS IN THE FORNTEND 
