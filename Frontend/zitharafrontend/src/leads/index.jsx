@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import TitleCard from '../Cards/TitleCard';
 import axios from 'axios';
-
 const Leads = () => {
     const [currentRecords, setCurrentRecords] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -10,8 +9,8 @@ const Leads = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortBy, setSortBy] = useState('date'); // Default sorting by date
-    const [sortDirection, setSortDirection] = useState('asc'); // Default sorting direction ascending
+    const [sortBy, setSortBy] = useState('date'); 
+    const [sortDirection, setSortDirection] = useState('asc');
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(20);
     const [showForm, setShowForm] = useState(false);
@@ -41,7 +40,7 @@ const Leads = () => {
         try {
             const response = await axios.get('https://reactassignment-wfxm.onrender.com/customers');
             setCustomers(response.data);
-            setFilteredCustomers(response.data); // Initialize filteredCustomers with all customers
+            setFilteredCustomers(response.data); 
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching customers:', error);
@@ -53,8 +52,8 @@ const Leads = () => {
     const deleteCustomer = async (customerId) => {
         try {
             const response = await axios.delete(`https://reactassignment-wfxm.onrender.com/customers/${customerId}`);
-            console.log(response.data.message); // Log success message
-            fetchCustomers(); // Fetch updated customer list after deletion
+            console.log(response.data.message); 
+            fetchCustomers(); 
         } catch (error) {
             console.error('Error deleting customer:', error);
         }
@@ -68,15 +67,13 @@ const Leads = () => {
             customer.location.toLowerCase().includes(query.toLowerCase())
         );
         setFilteredCustomers(filtered);
-        setCurrentPage(1); // Reset current page when search query changes
+        setCurrentPage(1); 
     };
 
     const handleSort = (criteria) => {
         if (sortBy === criteria) {
-            // Toggle sort direction if sorting by the same criteria
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
         } else {
-            // If sorting by a new criteria, set it as the new sorting criteria and default to ascending direction
             setSortBy(criteria);
             setSortDirection('asc');
         }
@@ -88,21 +85,16 @@ const Leads = () => {
     useEffect(() => {
     setCurrentRecords(filteredCustomers.slice(indexOfFirstRecord, indexOfLastRecord));
 }, [filteredCustomers, indexOfFirstRecord, indexOfLastRecord]);
-
-
-    // Calculate the starting serial number for the current page
     const startingSerialNumber = (currentPage - 1) * recordsPerPage;
-
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const addCustomer = async () => {
-        // Implement your logic to send the form data to the backend for creating a new customer
         try {
             const response = await axios.post('https://reactassignment-wfxm.onrender.com/customers', formData);
             console.log('New customer added:', response.data);
-            fetchCustomers(); // Fetch updated customer list after adding a new customer
-            setShowForm(false); // Close the form after successful submission
-            setFormData({ // Clear the form data
+            fetchCustomers(); 
+            setShowForm(false); 
+            setFormData({ 
                 customer_name: '',
                 age: '',
                 location: '',
