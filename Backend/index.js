@@ -1,6 +1,8 @@
 const express = require('express');
 const { Client } = require('pg');
 require('dotenv').config();
+const path = require('path')
+
 const cors = require('cors');
 const app = express();
 app.use(cors()); // Note: Use cors() instead of cors

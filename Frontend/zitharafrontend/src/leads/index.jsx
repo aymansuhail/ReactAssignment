@@ -4,6 +4,7 @@ import TitleCard from '../Cards/TitleCard';
 import axios from 'axios';
 
 const Leads = () => {
+    const [currentRecords, setCurrentRecords] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [filteredCustomers, setFilteredCustomers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +26,10 @@ const Leads = () => {
         console.log('Fetching customers...');
         fetchCustomers();
     }, []);
+      useEffect(() => {
+        setCurrentRecords(filteredCustomers);
+    }, [filteredCustomers]);
+
 
     useEffect(() => {
         console.log('Customers:', customers);
@@ -77,28 +82,13 @@ const Leads = () => {
         }
     };
 
-    // Function to compare dates for sorting
-    const compareDates = (a, b) => {
-        if (sortDirection === 'asc') {
-            return moment(a.created_at).isBefore(b.created_at) ? -1 : 1;
-        } else {
-            return moment(a.created_at).isBefore(b.created_at) ? 1 : -1;
-        }
-    };
-
-    // Function to compare times for sorting
-    const compareTimes = (a, b) => {
-        if (sortDirection === 'asc') {
-            return moment(a.created_at).format('HH:mm:ss').localeCompare(moment(b.created_at).format('HH:mm:ss'));
-        } else {
-            return moment(b.created_at).format('HH:mm:ss').localeCompare(moment(a.created_at).format('HH:mm:ss'));
-        }
-    };
-
     // Pagination
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = filteredCustomers.slice(indexOfFirstRecord, indexOfLastRecord);
+    useEffect(() => {
+    setCurrentRecords(filteredCustomers.slice(indexOfFirstRecord, indexOfLastRecord));
+}, [filteredCustomers, indexOfFirstRecord, indexOfLastRecord]);
+
 
     // Calculate the starting serial number for the current page
     const startingSerialNumber = (currentPage - 1) * recordsPerPage;
@@ -130,6 +120,14 @@ const Leads = () => {
             [name]: value
         });
     };
+
+   const sortedRecords = Array.isArray(currentRecords) ? currentRecords.sort((a, b) => {
+        if (sortBy === 'date') {
+            return sortDirection === 'asc' ? moment(a.created_at).diff(b.created_at) : moment(b.created_at).diff(a.created_at);
+        } else {
+            return sortDirection === 'asc' ? moment(a.created_at).format('HH:mm:ss').localeCompare(moment(b.created_at).format('HH:mm:ss')) : moment(b.created_at).format('HH:mm:ss').localeCompare(moment(a.created_at).format('HH:mm:ss'));
+        }
+    }) : [];
 
     return (
         <TitleCard title="Customers" topMargin="mt-2" >
@@ -189,24 +187,22 @@ const Leads = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentRecords
-                                    .sort((a, b) => sortBy === 'date' ? compareDates(a, b) : compareTimes(a, b))
-                                    .map((customer, index) => (
-                                        <tr key={customer.sno}>
-                                            <td>{startingSerialNumber + index + 1}</td>
-                                            <td>{customer.customer_name}</td>
-                                            <td>{customer.age}</td>
-                                            <td>{customer.phone}</td>
-                                            <td>{customer.location}</td>
-                                            <td>{moment(customer.created_at).format('YYYY-MM-DD')}</td>
-                                            <td>{moment(customer.created_at).format('HH:mm:ss')}</td>
-                                            <td>
-                                                <button onClick={() => deleteCustomer(customer.sno)} className="btn btn-square btn-ghost inline-flex items-center">
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                {sortedRecords.map((customer, index) => (
+                                    <tr key={customer.sno}>
+                                        <td>{startingSerialNumber + index + 1}</td>
+                                        <td>{customer.customer_name}</td>
+                                        <td>{customer.age}</td>
+                                        <td>{customer.phone}</td>
+                                        <td>{customer.location}</td>
+                                        <td>{moment(customer.created_at).format('YYYY-MM-DD')}</td>
+                                        <td>{moment(customer.created_at).format('HH:mm:ss')}</td>
+                                        <td>
+                                            <button onClick={() => deleteCustomer(customer.sno)} className="btn btn-square btn-ghost inline-flex items-center">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                         <div className="join grid grid-cols-2">
@@ -223,8 +219,5 @@ const Leads = () => {
         </TitleCard>
     );
 };
-
-
-
 
 export default Leads;
