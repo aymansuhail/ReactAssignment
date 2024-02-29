@@ -1,12 +1,12 @@
 const express = require('express');
 const { Client } = require('pg');
 require('dotenv').config();
-const path = require('path')
+const path = require('path');
 
 const cors = require('cors');
 const app = express();
-app.use(cors()); // Note: Use cors() instead of cors
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 const connectionString = 'postgresql://aymansuhail:eoCV1yXptus0@ep-sparkling-limit-a57mzl0i.us-east-2.aws.neon.tech/Dummydata?sslmode=require';
@@ -19,19 +19,25 @@ client.connect()
   .then(() => console.log('Connected to PostgreSQL database'))
   .catch(err => console.error('Error connecting to PostgreSQL database:', err));
 
+// Middleware to handle errors
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
+
 // Endpoint to fetch all data
-app.get('https://reactassignment-wfxm.onrender.com/customers', async (req, res) => {
+app.get('/customers', async (req, res) => {
   try {
     const result = await client.query('SELECT * FROM customer_info');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching data:', err);
-    res.status(500).send('Error fetching data');
+    next(err); 
   }
 });
 
 // Endpoint to fetch data by ID
-app.get('https://reactassignment-wfxm.onrender.com/customers/:sno', async (req, res) => {
+app.get('/customers/:sno', async (req, res) => {
   const sno = req.params.sno;
   try {
     const result = await client.query('SELECT * FROM customer_info WHERE sno = $1', [sno]);
@@ -42,11 +48,12 @@ app.get('https://reactassignment-wfxm.onrender.com/customers/:sno', async (req, 
     }
   } catch (err) {
     console.error('Error fetching data by ID:', err);
-    res.status(500).send('Error fetching data by ID');
+    next(err); // Pass error to the error handling middleware
   }
 });
+
 // Endpoint to delete a user by sno
-app.delete('https://reactassignment-wfxm.onrender.com/customers/:sno', async (req, res) => {
+app.delete('/customers/:sno', async (req, res) => {
   const sno = req.params.sno;
   try {
     const result = await client.query('DELETE FROM customer_info WHERE sno = $1 RETURNING *', [sno]);
@@ -57,12 +64,11 @@ app.delete('https://reactassignment-wfxm.onrender.com/customers/:sno', async (re
     }
   } catch (err) {
     console.error('Error deleting customer:', err);
-    res.status(500).send('Error deleting customer');
+    next(err); // Pass error to the error handling middleware
   }
 });
 
-
-app.post('https://reactassignment-wfxm.onrender.com/customers', async (req, res) => {
+app.post('/customers', async (req, res) => {
   const { customer_name, age, location, phone } = req.body;
   const created_at = new Date();
   try {
@@ -70,7 +76,7 @@ app.post('https://reactassignment-wfxm.onrender.com/customers', async (req, res)
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('Error creating customer:', err);
-    res.status(500).send('Error creating customer');
+    next(err); 
   }
 });
 
