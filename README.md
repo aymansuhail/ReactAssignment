@@ -1,5 +1,11 @@
 # Deployed frontend link
 https://reactassignment-1-3bp1.onrender.com/
+# Demo 
+
+
+https://github.com/aymansuhail/ReactAssignment/assets/81426384/6f14be3d-8d6d-4a62-b034-2919ed3a7ae5
+
+
 # Commands used for postgres
 Created database using - CREATE DATABASE Dummydata;
 Created Table using - CREATE TABLE customer_info (
